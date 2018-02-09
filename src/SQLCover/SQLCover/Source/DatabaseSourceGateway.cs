@@ -45,10 +45,9 @@ public IEnumerable<Batch> GetBatches(List<string> objectFilter)
             var table =
                 _databaseGateway.GetRecords(
                     @"
-select object_id, '[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']' as object_name, definition, uses_quoted_identifier 
+select object_id, ISNULL('[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']', 'Object ' + CAST(object_id as nvarchar(12))) as object_name, definition, uses_quoted_identifier 
 from sys.sql_modules 
 where object_id not in (select object_id from sys.objects where type = 'IF')
-and object_name(object_id) is not null
 ");
 
             var batches = new List<Batch>();
@@ -104,11 +103,10 @@ and object_name(object_id) is not null
             var table =
                 _databaseGateway.GetRecords(
                     @"
-select '[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']' as object_name 
+select ISNULL('[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']', 'Object ' + CAST(object_id as nvarchar(12))) as object_name 
 from sys.sql_modules 
 where object_id not in (select object_id from sys.objects where type = 'IF') 
 and definition is null
-and object_name(object_id) is not null
 ");
 
 
@@ -136,12 +134,11 @@ and object_name(object_id) is not null
         {
             var tSQLtObjects =
                 _databaseGateway.GetRecords(@"
-select  '[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']' as object_name 
+select  ISNULL('[' + object_schema_name(object_id) + '].[' + object_name(object_id) + ']', 'Object ' + CAST(object_id as nvarchar(12))) as object_name 
 from sys.procedures
 where schema_id in (
     select major_id from sys.extended_properties ep
-    where class_desc = 'SCHEMA' and name = 'tSQLt.TestClass' )
-and object_name(object_id) is not null");
+    where class_desc = 'SCHEMA' and name = 'tSQLt.TestClass' )");
 
             var excludedObjects = new List<string>();
 
