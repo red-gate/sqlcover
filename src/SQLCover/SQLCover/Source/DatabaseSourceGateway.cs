@@ -28,7 +28,7 @@ namespace SQLCover.Source
                 return res;
             }
 
-            return SqlServerVersion.Sql130;
+            return SqlServerVersion.Sql140;
         }
 
 
