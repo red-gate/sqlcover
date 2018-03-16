@@ -6,6 +6,7 @@
         Sql100,
         Sql110,
         Sql120,
-        Sql130
+        Sql130,
+        Sql140
     }
 }
