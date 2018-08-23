@@ -45,7 +45,7 @@ namespace SQLCover
         {
         }
 
-        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType)
+        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30)
         {
             if (debugger)
                 Debugger.Launch();
