@@ -9,6 +9,7 @@ namespace SQLCover.Gateway
     {
         private readonly string _connectionString;
         private readonly string _databaseName;
+        private readonly int _commandTimeout;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
 
         public string DataSource { get { return _connectionStringBuilder.DataSource; } }
@@ -17,10 +18,11 @@ namespace SQLCover.Gateway
         {
             //for mocking.
         }
-        public DatabaseGateway(string connectionString, string databaseName)
+        public DatabaseGateway(string connectionString, string databaseName, int commandTimeout = 30)
         {
             _connectionString = connectionString;
             _databaseName = databaseName;
+            _commandTimeout = commandTimeout;
             _connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
         }
 

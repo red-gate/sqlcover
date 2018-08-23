@@ -58,7 +58,7 @@ namespace SQLCover
             _logging = logging;
             _debugger = debugger;
             _traceType = traceType;
-            _database = new DatabaseGateway(connectionString, databaseName);
+            _database = new DatabaseGateway(connectionString, databaseName, commandTimeout);
             _source = new DatabaseSourceGateway(_database);
         }
 
