@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gateway\CommandWrapper.cs" />
     <Compile Include="Objects\Batch.cs" />
     <Compile Include="CodeCoverage.cs" />
     <Compile Include="CoverageResult.cs" />
