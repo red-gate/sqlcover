@@ -78,9 +78,9 @@ namespace SQLCover.Gateway
             }
         }
 
-        public void Execute(string query, int timeOut = 30)
+        public void Execute(string query)
         {
-            var command = new CommandWrapper(_connectionString, query, timeOut);
+            var command = new CommandWrapper(_connectionString, query, _commandTimeout);
             command.ExecuteNonQuery();
         }
     }
