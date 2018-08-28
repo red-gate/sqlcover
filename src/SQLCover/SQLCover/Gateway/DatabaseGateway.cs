@@ -23,7 +23,8 @@ namespace SQLCover.Gateway
             _connectionString = connectionString;
             _databaseName = databaseName;
             _commandTimeout = commandTimeout;
-            _connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
+            _connectionStringBuilder =
+                new SqlConnectionStringBuilder(connectionString) {InitialCatalog = _databaseName};
         }
 
         public virtual string GetString(string query)
@@ -31,7 +32,6 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                conn.ChangeDatabase(_databaseName);
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = query;
@@ -45,7 +45,6 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                conn.ChangeDatabase(_databaseName);
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = query;
@@ -64,7 +63,6 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                conn.ChangeDatabase(_databaseName);
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = query;
@@ -106,7 +104,6 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                conn.ChangeDatabase(_databaseName);
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = command;
