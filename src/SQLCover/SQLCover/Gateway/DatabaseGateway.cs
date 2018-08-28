@@ -96,12 +96,12 @@ namespace SQLCover.Gateway
             }
         }
 
-        public void Execute(string command, int timeOut)
+        public void Execute(string query, int timeOut = 30)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = new SqlCommand(command, conn))
+                using (var cmd = new SqlCommand(query, conn))
                 {
                     cmd.CommandTimeout = timeOut;
                     cmd.ExecuteNonQuery();
