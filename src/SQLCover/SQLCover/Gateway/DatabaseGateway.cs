@@ -12,7 +12,7 @@ namespace SQLCover.Gateway
         private readonly int _commandTimeout;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
 
-        public string DataSource { get { return _connectionStringBuilder.DataSource; } }
+        public string DataSource => _connectionStringBuilder.DataSource;
 
         public DatabaseGateway()
         {
