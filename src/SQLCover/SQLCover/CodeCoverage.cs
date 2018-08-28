@@ -112,7 +112,7 @@ namespace SQLCover
                 Console.WriteLine(message, args);
         }
 
-        public CoverageResult Cover(string command, int timeOut =30)
+        public CoverageResult Cover(string command)
         {
 
         Debug("Starting Code Coverage");
@@ -128,7 +128,7 @@ namespace SQLCover
 
             try
             {
-                _database.Execute(command, timeOut); //todo read messages or rowcounts or something
+                _database.Execute(command); //todo read messages or rowcounts or something
             }
             catch (System.Data.SqlClient.SqlException e)
             {
