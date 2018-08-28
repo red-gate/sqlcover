@@ -3,39 +3,38 @@ using System.Data.SqlClient;
 
 namespace SQLCover.Gateway
 {
-    internal class CommandWrapper
+    internal class CommandWrapper : IDisposable
 
     {
-        private readonly string _connectionString;
-        private readonly string _command;
-        private readonly int _timeout;
+        private readonly SqlCommand _command;
+        private readonly SqlConnection _connection;
 
         private CommandWrapper(string connectionString, string command, int timeout)
         {
-            _connectionString = connectionString;
-            _command = command;
-            _timeout = timeout;
+            _connection = new SqlConnection(connectionString);
+            _command = new SqlCommand(command, _connection) {CommandTimeout = timeout};
         }
 
         public CommandWrapper(SqlConnectionStringBuilder connectionStringBuilder, string command, int timeout = 30) :
             this(connectionStringBuilder.ToString(), command, timeout)
         { }
 
-        private T OpenConnectionAndDo<T>(Func<SqlCommand,T> func)
+        private T OpenConnectionAndDo<T>(Func<T> func)
         {
-            using (var connection = new SqlConnection(_connectionString))
-            using (var command = new SqlCommand(_command, connection))
-            {
-                command.CommandTimeout = _timeout;
-                connection.Open();
-                return func(command);
-            }
+            _connection.Open();
+            return func();
         }
 
-        public int ExecuteNonQuery() => OpenConnectionAndDo(command => command.ExecuteNonQuery());
+        public int ExecuteNonQuery() => OpenConnectionAndDo(() => _command.ExecuteNonQuery());
 
-        public SqlDataReader ExecuteReader() => OpenConnectionAndDo(command => command.ExecuteReader());
+        public SqlDataReader ExecuteReader() => OpenConnectionAndDo(() => _command.ExecuteReader());
 
-        public object ExecuteScalar() => OpenConnectionAndDo(command => command.ExecuteScalar());
+        public object ExecuteScalar() => OpenConnectionAndDo(() => _command.ExecuteScalar());
+
+        public void Dispose()
+        {
+            _command?.Dispose();
+            _connection?.Dispose();
+        }
     }
 }

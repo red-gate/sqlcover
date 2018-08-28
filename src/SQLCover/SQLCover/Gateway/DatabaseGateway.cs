@@ -27,13 +27,15 @@ namespace SQLCover.Gateway
 
         public virtual string GetString(string query)
         {
-            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
-            return command.ExecuteScalar().ToString();
+            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            {
+                return command.ExecuteScalar().ToString();
+            }
         }
 
         public virtual DataTable GetRecords(string query)
         {
-            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
+            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -44,7 +46,7 @@ namespace SQLCover.Gateway
 
         public virtual DataTable GetTraceRecords(string query)
         {
-            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
+            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -53,7 +55,7 @@ namespace SQLCover.Gateway
                 {
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(reader[0].ToString());
-                     
+                 
                     var root = xml.SelectNodes("/event").Item(0);
 
                     var objectId = xml.SelectNodes("/event/data[@name='object_id']").Item(0);
@@ -61,7 +63,7 @@ namespace SQLCover.Gateway
                     var offsetEnd = xml.SelectNodes("/event/data[@name='offset_end']").Item(0);
 
                     root.RemoveAll();
-                         
+                     
                     root.AppendChild(objectId);
                     root.AppendChild(offset);
                     root.AppendChild(offsetEnd);
@@ -78,8 +80,10 @@ namespace SQLCover.Gateway
 
         public void Execute(string query)
         {
-            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
-            command.ExecuteNonQuery();
+            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            {
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
