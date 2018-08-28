@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using NUnit.Framework;
+using SQLCover.Trace;
 
 namespace SQLCover.IntegrationTests
 {
@@ -65,10 +66,10 @@ namespace SQLCover.IntegrationTests
         public void TimeoutCalling_Cover_Fails_With_Timeout_Exception()
         {
             var coverage = new CodeCoverage(TestServerConnectionString, TestDatabaseName,
-                new[] {".*tSQLt.*", ".*proc.*"});
+                new[] {".*tSQLt.*", ".*proc.*"}, false, false, TraceControllerType.Default, 1);
             try
             {
-                coverage.Cover("WAITFOR DELAY '1:00:00'", 1);
+                coverage.Cover("WAITFOR DELAY '1:00:00'");
             }
             catch (System.Data.SqlClient.SqlException e)
             {

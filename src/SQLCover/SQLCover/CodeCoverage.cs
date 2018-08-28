@@ -45,7 +45,7 @@ namespace SQLCover
         {
         }
 
-        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType)
+        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30)
         {
             if (debugger)
                 Debugger.Launch();
@@ -58,7 +58,7 @@ namespace SQLCover
             _logging = logging;
             _debugger = debugger;
             _traceType = traceType;
-            _database = new DatabaseGateway(connectionString, databaseName);
+            _database = new DatabaseGateway(connectionString, databaseName, commandTimeout);
             _source = new DatabaseSourceGateway(_database);
         }
 
@@ -112,7 +112,7 @@ namespace SQLCover
                 Console.WriteLine(message, args);
         }
 
-        public CoverageResult Cover(string command, int timeOut =30)
+        public CoverageResult Cover(string command)
         {
 
         Debug("Starting Code Coverage");
@@ -128,7 +128,7 @@ namespace SQLCover
 
             try
             {
-                _database.Execute(command, timeOut); //todo read messages or rowcounts or something
+                _database.Execute(command); //todo read messages or rowcounts or something
             }
             catch (System.Data.SqlClient.SqlException e)
             {
