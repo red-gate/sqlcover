@@ -10,7 +10,7 @@ namespace SQLCover.Gateway
         private readonly string _command;
         private readonly int _timeout;
 
-        public CommandWrapper(string connectionString, string command, int timeout = 30)
+        private CommandWrapper(string connectionString, string command, int timeout)
         {
             _connectionString = connectionString;
             _command = command;
