@@ -17,6 +17,10 @@ namespace SQLCover.Gateway
             _timeout = timeout;
         }
 
+        public CommandWrapper(SqlConnectionStringBuilder connectionStringBuilder, string command, int timeout = 30) :
+            this(connectionStringBuilder.ToString(), command, timeout)
+        { }
+
         private T OpenConnectionAndDo<T>(Func<SqlCommand,T> func)
         {
             using (var connection = new SqlConnection(_connectionString))

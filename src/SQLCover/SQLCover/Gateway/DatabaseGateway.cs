@@ -7,7 +7,6 @@ namespace SQLCover.Gateway
 {
     public class DatabaseGateway
     {
-        private readonly string _connectionString;
         private readonly string _databaseName;
         private readonly int _commandTimeout;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
@@ -20,7 +19,6 @@ namespace SQLCover.Gateway
         }
         public DatabaseGateway(string connectionString, string databaseName, int commandTimeout = 30)
         {
-            _connectionString = connectionString;
             _databaseName = databaseName;
             _commandTimeout = commandTimeout;
             _connectionStringBuilder =
@@ -29,13 +27,13 @@ namespace SQLCover.Gateway
 
         public virtual string GetString(string query)
         {
-            var command = new CommandWrapper(_connectionString, query, _commandTimeout);
+            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
             return command.ExecuteScalar().ToString();
         }
 
         public virtual DataTable GetRecords(string query)
         {
-            var command = new CommandWrapper(_connectionString, query, _commandTimeout);
+            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -46,7 +44,7 @@ namespace SQLCover.Gateway
 
         public virtual DataTable GetTraceRecords(string query)
         {
-            var command = new CommandWrapper(_connectionString, query, _commandTimeout);
+            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -80,7 +78,7 @@ namespace SQLCover.Gateway
 
         public void Execute(string query)
         {
-            var command = new CommandWrapper(_connectionString, query, _commandTimeout);
+            var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
             command.ExecuteNonQuery();
         }
     }
