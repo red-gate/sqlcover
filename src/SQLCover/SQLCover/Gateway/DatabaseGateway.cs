@@ -32,9 +32,8 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandText = query;
                     return cmd.ExecuteScalar().ToString();
                 }
             }
@@ -45,9 +44,8 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandText = query;
                     using (var reader = cmd.ExecuteReader())
                     {
                         var ds = new DataTable();
@@ -63,9 +61,8 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.CommandText = query;
                     using (var reader = cmd.ExecuteReader())
                     {
                         var ds = new DataTable();
@@ -104,9 +101,8 @@ namespace SQLCover.Gateway
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (var cmd = new SqlCommand(command, conn))
                 {
-                    cmd.CommandText = command;
                     cmd.CommandTimeout = timeOut;
                     cmd.ExecuteNonQuery();
                 }
