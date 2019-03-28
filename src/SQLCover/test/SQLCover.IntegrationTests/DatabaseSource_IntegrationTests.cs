@@ -10,11 +10,6 @@ namespace SQLCover.IntegrationTests
     public class DatabaseSource_IntegrationTests : SQLCoverTest
     {
         [Test]
-        public void Retrieves_Correct_SqlVersion()
-        {
-        }
-
-        [Test]
         public void Retrives_All_Batches()
         {
             var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
@@ -52,24 +47,23 @@ namespace SQLCover.IntegrationTests
             Assert.AreEqual(5, batches.Count());
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
-            
+
             Assert.AreEqual(2, proc.StatementCount);
         }
-
 
         [Test]
         public void Doesnt_Die_When_Finding_Encrypted_Stored_Procedures()
         {
-            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
+            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName, 15);
             databaseGateway.Execute(@"if not exists (select * from sys.procedures where name = 'enc')
 begin
 	exec sp_executesql N'create procedure enc with encryption 
 	as
 	select 100;'
-end", 15);
+end");
             var source = new DatabaseSourceGateway(databaseGateway);
             var batches = source.GetBatches(null);
-            
+
             foreach (var batch in batches)
             {
                 Console.WriteLine("batch: {0}", batch.Text);
@@ -77,13 +71,9 @@ end", 15);
 
             Assert.AreEqual(4, batches.Count());
 
-            var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
-
-            var coverage = new CodeCoverage(ConnectionStringReader.GetIntegration(), TestDatabaseName, null, true, false);
-            var results = coverage.Cover("exec enc");
-            //if we dont die we are good
+            var coverage = new CodeCoverage(TestServerConnectionString, TestDatabaseName, null, true, false);
+            Assert.DoesNotThrow(() => coverage.Cover("exec enc"));
         }
-
 
         [Test]
         public void Shows_Warnings_When_Definition_Not_Available()
@@ -100,9 +90,6 @@ end");
             Assert.IsTrue(
                 warnings.Contains("enc")
                 );
-
         }
-
-
     }
 }

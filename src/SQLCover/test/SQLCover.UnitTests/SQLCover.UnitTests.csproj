@@ -70,12 +70,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Objects\StatementCheckerTests.cs" />
     <Compile Include="Parsers\StatementParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\DatabaseSourceGatewayTests.cs" />
-    <Compile Include="Source\FilesSystemSourceGatewayTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SQLCover\SQLCover.csproj">

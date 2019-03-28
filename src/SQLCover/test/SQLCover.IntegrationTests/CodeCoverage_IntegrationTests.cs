@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using NUnit.Framework;
 using SQLCover.Trace;
-using TestLib;
 using System.Threading;
 
 namespace SQLCover.IntegrationTests

@@ -54,9 +54,6 @@
     <Compile Include="SqlCoverTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ConnectionString.appVeyor.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
