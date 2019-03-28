@@ -69,7 +69,7 @@ end");
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
             var coverage = new CodeCoverage(TestServerConnectionString, TestDatabaseName, null, true, false);
             Assert.DoesNotThrow(() => coverage.Cover("exec enc"));
