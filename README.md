@@ -29,11 +29,12 @@ Publish the DatabaseProject database to is-2016.testnet.red-gate.com (or change 
 
 * Launch .sln file in VS
 * Restore nuget packages (sometimes this doesn't work unless done manually)
+* Update version in AssemblyInfo
 * Build solution
 * Change version in nuspec file in nuspec folder
 * Load nuspec file in Nuget Package Explorer (available from Windows Store)
 * Use 'Save As...' to get a nupkg file
-* Publish that nupkg file using the invocation in push.txt (updating the file name) - you may have to go and find nuget.exe from somewhere if it isn't in your path
+* Publish that nupkg file using the invocation in push.bat (updating the file name) - you may have to go and find nuget.exe from somewhere if it isn't in your path
 
 ### Redgate
 Thanks to Redgate for supporting this open source project
