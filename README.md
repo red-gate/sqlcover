@@ -20,6 +20,10 @@
 
 This is a fork which lets us create a properly signed SQL Cover package that can be used by our SSMS addins.
 
+#### Running the tests
+
+Publish the DatabaseProject database to is-2016.testnet.red-gate.com (or change the server in IntegrationTests.SQLCoverTest and then use that server) as a database named SqlCoverDatabase. Now you should be able to run all the tests.
+
 #### Building the package
 
 * Launch .sln file in VS
