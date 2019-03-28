@@ -1,1 +1,1 @@
-nuget.exe push RedGate.ThirdParty.SqlCover.1.0.24.nupkg -apikey VSTS -source https://red-gate.pkgs.visualstudio.com/_packaging/Main/nuget/v3/index.json
+nuget.exe push RedGate.ThirdParty.SqlCover.1.0.25.nupkg -apikey VSTS -source https://red-gate.pkgs.visualstudio.com/_packaging/Main/nuget/v3/index.json
