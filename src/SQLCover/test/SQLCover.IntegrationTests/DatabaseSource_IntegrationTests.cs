@@ -10,11 +10,6 @@ namespace SQLCover.IntegrationTests
     public class DatabaseSource_IntegrationTests : SQLCoverTest
     {
         [Test]
-        public void Retrieves_Correct_SqlVersion()
-        {
-        }
-
-        [Test]
         public void Retrives_All_Batches()
         {
             var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
@@ -28,7 +23,7 @@ namespace SQLCover.IntegrationTests
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_procedure]");
 
@@ -49,13 +44,12 @@ namespace SQLCover.IntegrationTests
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
-            
+
             Assert.AreEqual(2, proc.StatementCount);
         }
-
 
         [Test]
         public void Doesnt_Die_When_Finding_Encrypted_Stored_Procedures()
@@ -69,25 +63,22 @@ begin
 end");
             var source = new DatabaseSourceGateway(databaseGateway);
             var batches = source.GetBatches(null);
-            
+
             foreach (var batch in batches)
             {
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
-            var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
-
-            Assert.AreEqual(2, proc.StatementCount);
-            
+            var coverage = new CodeCoverage(TestServerConnectionString, TestDatabaseName, null, true, false);
+            Assert.DoesNotThrow(() => coverage.Cover("exec enc"));
         }
-
 
         [Test]
         public void Shows_Warnings_When_Definition_Not_Available()
         {
-            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName, 15);
+            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
             databaseGateway.Execute(@"if not exists (select * from sys.procedures where name = 'enc')
 begin
 	exec sp_executesql N'create procedure enc with encryption 
@@ -99,9 +90,6 @@ end");
             Assert.IsTrue(
                 warnings.Contains("enc")
                 );
-
         }
-
-
     }
 }

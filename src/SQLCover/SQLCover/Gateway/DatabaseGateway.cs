@@ -24,7 +24,7 @@ namespace SQLCover.Gateway
             _connectionStringBuilder =
                 new SqlConnectionStringBuilder(connectionString) {InitialCatalog = _databaseName};
         }
-
+        
         public virtual string GetString(string query)
         {
             using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
