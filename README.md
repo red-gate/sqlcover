@@ -6,6 +6,7 @@
 
 
 [licence badge]:https://img.shields.io/badge/License-Apache%202.0-blue.svg
+<img src="https://sqlcover.visualstudio.com/SQLCover/_apis/build/status/SQLCover-CI?branchName=master" />
 
 [stars badge]:https://img.shields.io/github/stars/GoEddie/SQLCover.svg
 [forks badge]:https://img.shields.io/github/forks/GoEddie/SQLCover.svg
@@ -53,19 +54,14 @@ Navigation:
 
 
 ## Installation
-You will either need to build the project and grab the output SQLCover.dll or
-you can download the pre-built binary from: http://the.agilesql.club/SQLCover/download.php
+You will either need to build the project and grab the output SQLCover.dll or you can download the pre-built binary from: http://the.agilesql.club/SQLCover/download.php
 
 
 # Usage
 There are three basic ways to use it:
 
 ### 1. Redgate DLM Automation Suite
-If you have the DLM automation suite then create a nuget package of your
-database, deploy the project to a test database and then use the example
-powershell script
-(https://github.com/GoEddie/SQLCover/blob/master/example/SQLCover.ps1 and
-included in the download above):
+If you have the DLM automation suite then create a nuget package of your database, deploy the project to a test database and then use the example powershell script (https://github.com/GoEddie/SQLCover/blob/master/example/SQLCover.ps1 and included in the download above):
 ```
 Get-CoverRedgateCITest "SQLCover-path.dll" "server=servername;integrated security=sspi;" "nuget-package-path.nupkg" "servername" "database-name"
 ```
@@ -140,3 +136,7 @@ $coverageResults = $coverage.Stop()
 
 ## License
 Apache 2.0
+
+## Development
+
+To run the integration tests, create a sql instance or using the `./src/SQLCover/test/CreateDockerDbInstance.ps1` script to create a docker version of sql. Then run `./src/SQLCover/test/deployLocal.ps1` (if you use your own instance deploy the `DatabaseProject` ssdt project to the instance). The connection string that the integration tests use is `Server=tcp:docker-instance-ip;uid=sa;pwd=Psgsgsfsfs!!!!!;initial catalog=DatabaseProject` where docker-instance-ip is the ip address of the container created by `./src/SQLCover/test/CreateDockerDbInstance.ps1`. If you want the tests to use a different connection string, in the `\src\SQLCover\DatabaseProject\bin\Debug` folder put a `ConnectionString.user.config` which is a text file with one line that is the connection string that you want to use. The unit tests need no connection string.

@@ -4,12 +4,16 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using NUnit.Framework;
 using SQLCover.Trace;
+using TestLib;
+using System.Threading;
 
 namespace SQLCover.IntegrationTests
 {
     [TestFixture]
+    [Apartment(ApartmentState.STA)]
     public class CodeCoverage_IntegrationTests : SQLCoverTest
     {
+
         [Test]
         public void SQL2005NotSupported()
         {
@@ -71,7 +75,7 @@ namespace SQLCover.IntegrationTests
             {
                 coverage.Cover("WAITFOR DELAY '1:00:00'");
             }
-            catch (System.Data.SqlClient.SqlException e)
+            catch (SqlException e)
             {
                 if (e.Number == -2)
                 {
@@ -102,7 +106,32 @@ namespace SQLCover.IntegrationTests
 
             Assert.That(result.CoveredStatementCount, Is.EqualTo(2));
 
+            var xml = result.OpenCoverXml();           
+
+        }
+
+        [Test]
+        public void Code_Coverage_Excludes_Label_From_Lines_That_Can_Be_Covered()
+        {
+            var coverage = new CodeCoverage(TestServerConnectionString, TestDatabaseName);
+            coverage.Start();
+            using (var con = new SqlConnection(TestServerConnectionString))
+            {
+                con.Open();
+                using (var cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "exec [dbo].[a_procedure_with_goto]";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            var result = coverage.Stop();
+            
+            
+            Assert.That(result.CoveredStatementCount, Is.EqualTo(4));
+            Assert.That(result.StatementCount, Is.EqualTo(22));
             var xml = result.OpenCoverXml();
+
         }
 
         [Test]
@@ -122,7 +151,7 @@ namespace SQLCover.IntegrationTests
 
             var result = coverage.Stop();
 
-            Assert.That(result.RawXml(), Is.StringContaining("HitCount=\"1\""));
+            Assert.That(result.RawXml().Contains("HitCount=\"1\""), Is.True);
         }
 
         [Test]

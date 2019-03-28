@@ -28,7 +28,7 @@ namespace SQLCover.IntegrationTests
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_procedure]");
 
@@ -49,7 +49,7 @@ namespace SQLCover.IntegrationTests
                 Console.WriteLine("batch: {0}", batch.Text);
             }
 
-            Assert.AreEqual(4, batches.Count());
+            Assert.AreEqual(5, batches.Count());
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
             
@@ -60,13 +60,13 @@ namespace SQLCover.IntegrationTests
         [Test]
         public void Doesnt_Die_When_Finding_Encrypted_Stored_Procedures()
         {
-            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName, 15);
+            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
             databaseGateway.Execute(@"if not exists (select * from sys.procedures where name = 'enc')
 begin
 	exec sp_executesql N'create procedure enc with encryption 
 	as
 	select 100;'
-end");
+end", 15);
             var source = new DatabaseSourceGateway(databaseGateway);
             var batches = source.GetBatches(null);
             
@@ -79,15 +79,16 @@ end");
 
             var proc = batches.FirstOrDefault(p => p.ObjectName == "[dbo].[a_large_procedure]");
 
-            Assert.AreEqual(2, proc.StatementCount);
-            
+            var coverage = new CodeCoverage(ConnectionStringReader.GetIntegration(), TestDatabaseName, null, true, false);
+            var results = coverage.Cover("exec enc");
+            //if we dont die we are good
         }
 
 
         [Test]
         public void Shows_Warnings_When_Definition_Not_Available()
         {
-            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName, 15);
+            var databaseGateway = new DatabaseGateway(TestServerConnectionString, TestDatabaseName);
             databaseGateway.Execute(@"if not exists (select * from sys.procedures where name = 'enc')
 begin
 	exec sp_executesql N'create procedure enc with encryption 
