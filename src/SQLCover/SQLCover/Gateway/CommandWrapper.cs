@@ -44,7 +44,6 @@ namespace SQLCover.Gateway
         public void Dispose()
         {
             _command?.Dispose();
-            _connection?.Dispose();
         }
     }
 }
