@@ -31,7 +31,11 @@ namespace SQLCover.Gateway
 
         private T OpenConnectionAndDo<T>(Func<T> func)
         {
-            _connection.Open();
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
+            }
+
             return func();
         }
 
