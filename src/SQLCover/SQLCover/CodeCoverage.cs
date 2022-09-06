@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -45,11 +46,24 @@ namespace SQLCover
         {
         }
 
-        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30)
+        public CodeCoverage(string connectionString, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30) : this(databaseName, excludeFilter, logging, debugger, traceType, commandTimeout)
+        {
+            _database = new DatabaseGateway(connectionString, databaseName, commandTimeout);
+            _source = new DatabaseSourceGateway(_database);
+        }
+
+        public CodeCoverage(IDbConnection dbConnection, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30) : this(databaseName, excludeFilter, logging, debugger, traceType, commandTimeout)
+        {
+            _database = new DatabaseGateway(dbConnection, databaseName, commandTimeout);
+            _source = new DatabaseSourceGateway(_database);
+        }
+
+        private CodeCoverage(string databaseName, string[] excludeFilter, bool logging, bool debugger,
+            TraceControllerType traceType, int commandTimeout = 30)
         {
             if (debugger)
                 Debugger.Launch();
-            
+
             _databaseName = databaseName;
             if (excludeFilter == null)
                 excludeFilter = new string[0];
@@ -58,9 +72,9 @@ namespace SQLCover
             _logging = logging;
             _debugger = debugger;
             _traceType = traceType;
-            _database = new DatabaseGateway(connectionString, databaseName, commandTimeout);
-            _source = new DatabaseSourceGateway(_database);
         }
+
+
 
         public bool Start()
         {
@@ -213,7 +227,7 @@ namespace SQLCover
         private void GenerateResults(List<string> filter, List<string> xml)
         {
             var batches = _source.GetBatches(filter);
-            _result = new CoverageResult(batches, xml, _databaseName, _database.DataSource);
+            _result = new CoverageResult(batches, xml, _databaseName, _database.DataSource());
         }
 
         public CoverageResult Results()

@@ -1,17 +1,30 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Xml;
 
 namespace SQLCover.Gateway
 {
     public class DatabaseGateway
     {
+        private readonly IDbConnection _dbConnection;
         private readonly string _databaseName;
         private readonly int _commandTimeout;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
 
-        public string DataSource => _connectionStringBuilder.DataSource;
+        public string DataSource()
+        {
+            var parameters = _dbConnection.ConnectionString.Split(';');
+            var parameter = parameters.FirstOrDefault(p => IsParameter(p, "Server") || IsParameter(p, "Data Source") || IsParameter(p, "DataSource"))?
+                .Split('=')[1]
+                .TrimStart(' ').
+                TrimEnd(' ');
+
+            return parameter ?? string.Empty;
+
+            bool IsParameter(string input, string param) => input.StartsWith(param, StringComparison.InvariantCultureIgnoreCase);
+        }
 
         public DatabaseGateway()
         {
@@ -24,10 +37,22 @@ namespace SQLCover.Gateway
             _connectionStringBuilder =
                 new SqlConnectionStringBuilder(connectionString) {InitialCatalog = _databaseName};
         }
-        
+
+        public DatabaseGateway(IDbConnection dbConnection, string databaseName, int commandTimeout = 30)
+        {
+            _dbConnection = dbConnection;
+            _databaseName = databaseName;
+            _commandTimeout = commandTimeout;
+        }
+
+        private CommandWrapper CreateCommand(string query)
+        {
+            return _dbConnection != null ? new CommandWrapper(_dbConnection, query, _commandTimeout) : new CommandWrapper(_connectionStringBuilder, query, _commandTimeout);
+        }
+
         public virtual string GetString(string query)
         {
-            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            using (var command = CreateCommand(query))
             {
                 return command.ExecuteScalar().ToString();
             }
@@ -35,7 +60,7 @@ namespace SQLCover.Gateway
 
         public virtual DataTable GetRecords(string query)
         {
-            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            using (var command = CreateCommand(query))
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -46,7 +71,7 @@ namespace SQLCover.Gateway
 
         public virtual DataTable GetTraceRecords(string query)
         {
-            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            using (var command = CreateCommand(query))
             using (var reader = command.ExecuteReader())
             {
                 var ds = new DataTable();
@@ -80,7 +105,7 @@ namespace SQLCover.Gateway
 
         public void Execute(string query)
         {
-            using (var command = new CommandWrapper(_connectionStringBuilder, query, _commandTimeout))
+            using (var command = CreateCommand(query))
             {
                 command.ExecuteNonQuery();
             }
