@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Xml;
 
 namespace SQLCover.Gateway
@@ -13,8 +15,15 @@ namespace SQLCover.Gateway
 
         public string DataSource()
         {
-            var csb = _connectionStringBuilder?? new SqlConnectionStringBuilder(_dbConnection.ConnectionString);
-            return csb.DataSource;
+            var parameters = _dbConnection.ConnectionString.Split(';');
+            var parameter = parameters.FirstOrDefault(p => IsParameter(p, "Server") || IsParameter(p, "Data Source") || IsParameter(p, "DataSource"))?
+                .Split('=')[1]
+                .TrimStart(' ').
+                TrimEnd(' ');
+
+            return parameter ?? string.Empty;
+
+            bool IsParameter(string input, string param) => input.StartsWith(param, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public DatabaseGateway()
