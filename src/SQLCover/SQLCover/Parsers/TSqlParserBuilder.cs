@@ -35,7 +35,7 @@ namespace SQLCover.Parsers
                     return new TSql160Parser(quoted);
                 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(version), version, null);
+                    return new TSql160Parser(quoted);
             }
         }
     }
