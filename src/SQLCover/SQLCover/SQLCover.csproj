@@ -37,8 +37,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!--
-      We changed the Microsoft.SqlServer.DacFx package because it is closely related to the Microsoft.SqlServer.TransactSql.ScriptDom version, 
-      which does not allow to work with the available version of this package in different versions of SSMS.
+      Although SQL Test runs this code out of process, we use the resigned version for convenience as it will help to ensure the version is always 
+      aligned to that in SQL Test. We also cannot use the DacFx version of ScriptDom in SQL Test as it is dependent on Microsoft.Data.SqlClient v5, 
+      which conflicts with the version of Microsoft.Data.SqlClient loaded in by SSMS (SSMS 19 loads v3).
     -->
     <Reference Include="Microsoft.SqlServer.TransactSql.ScriptDom, Version=16.1.6374.0, Culture=neutral, PublicKeyToken=7f465a1c156d4d57, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.TransactSql.ScriptDom.ReSigned.16.1.6374\lib\net46\Microsoft.SqlServer.TransactSql.ScriptDom.dll</HintPath>
