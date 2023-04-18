@@ -39,7 +39,7 @@ namespace SQLCover.Source
         }
 
 
-public IEnumerable<Batch> GetBatches(List<string> objectFilter)
+public IEnumerable<Batch> GetBatches(List<string> objectFilter, List<string> filteredObjects = null)
         {
             // object_name() can return NULL on permissions failures
             var table =
@@ -54,6 +54,12 @@ where object_id not in (select object_id from sys.objects where type = 'IF')
             
             var version = GetVersion();
             var excludedObjects = GetExcludedObjects();
+
+            if (filteredObjects != null)
+            {
+                excludedObjects.AddRange(filteredObjects);
+            }
+
             if(objectFilter == null)
                 objectFilter = new List<string>();
 
@@ -64,7 +70,7 @@ where object_id not in (select object_id from sys.objects where type = 'IF')
                 var quoted = (bool) row["uses_quoted_identifier"];
                 
                 var name = row["object_name"] as string;
-                
+
                 if (name != null && row["object_id"] as int? != null &&  DoesNotMatchFilter(name, objectFilter, excludedObjects))
                 {
                     batches.Add(
@@ -173,7 +179,7 @@ where schema_id in (
 
             foreach (var filter in excludedObjects)
             {
-                if (filter == lowerName)
+                if (filter == lowerName || filter == name)
                     return false;
             }
             

@@ -19,6 +19,7 @@ namespace SQLCover
         private readonly bool _debugger;
         private readonly TraceControllerType _traceType;
         private readonly List<string> _excludeFilter;
+        private readonly List<string> _filteredObjects;
         private readonly bool _logging;
         private readonly SourceGateway _source;
         private CoverageResult _result;
@@ -52,14 +53,14 @@ namespace SQLCover
             _source = new DatabaseSourceGateway(_database);
         }
 
-        public CodeCoverage(IDbConnection dbConnection, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30) : this(databaseName, excludeFilter, logging, debugger, traceType, commandTimeout)
+        public CodeCoverage(IDbConnection dbConnection, string databaseName, string[] excludeFilter, bool logging, bool debugger, TraceControllerType traceType, int commandTimeout = 30, List<string> filteredObjects = null) : this(databaseName, excludeFilter, logging, debugger, traceType, commandTimeout, filteredObjects)
         {
             _database = new DatabaseGateway(dbConnection, databaseName, commandTimeout);
             _source = new DatabaseSourceGateway(_database);
         }
 
         private CodeCoverage(string databaseName, string[] excludeFilter, bool logging, bool debugger,
-            TraceControllerType traceType, int commandTimeout = 30)
+            TraceControllerType traceType, int commandTimeout = 30, List<string> filteredObjects = null)
         {
             if (debugger)
                 Debugger.Launch();
@@ -69,6 +70,7 @@ namespace SQLCover
                 excludeFilter = new string[0];
 
             _excludeFilter = excludeFilter.ToList();
+            _filteredObjects = filteredObjects;
             _logging = logging;
             _debugger = debugger;
             _traceType = traceType;
@@ -115,7 +117,7 @@ namespace SQLCover
 
             var results = StopInternal();
 
-            GenerateResults(_excludeFilter, results);
+            GenerateResults(_excludeFilter, results,_filteredObjects);
 
             return _result;
         }
@@ -224,10 +226,20 @@ namespace SQLCover
         }
 
 
-        private void GenerateResults(List<string> filter, List<string> xml)
+        private void GenerateResults(List<string> filter, List<string> xml, List<string> filteredObjects = null)
         {
-            var batches = _source.GetBatches(filter);
+            var batches = _source.GetBatches(filter,filteredObjects);
             _result = new CoverageResult(batches, xml, _databaseName, _database.DataSource());
+        }
+
+        public List<string> GetBatchesObjectNames()
+        {
+            var batchesList = new List<string>();
+            foreach (var batch in _source.GetBatches(null))
+            {
+                batchesList.Add(batch.ObjectName);
+            }
+            return batchesList;
         }
 
         public CoverageResult Results()
