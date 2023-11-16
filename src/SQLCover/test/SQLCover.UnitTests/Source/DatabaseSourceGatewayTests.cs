@@ -27,6 +27,15 @@ namespace SQLCover.UnitTests.Source
             Assert.AreEqual(expected, source.GetVersion());
         }
 
+        [Test]
+        public void GetVersion_WhenFailedToRetrieveValue_ReturnsSql140()
+        {
+            var gateway = new Mock<DatabaseGateway>();
+            gateway.Setup(x => x.GetString(It.IsAny<string>())).Returns((string)null);
+            var source = new DatabaseSourceGateway(gateway.Object);
+            Assert.AreEqual(SqlServerVersion.Sql140, source.GetVersion());
+        }
+
         private Mock<DatabaseGateway> GetGateway(SqlServerVersion expected)
         {
             var gateway = new Mock<DatabaseGateway>();
