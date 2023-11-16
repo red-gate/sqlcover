@@ -21,7 +21,7 @@ namespace SQLCover.Source
 
         public SqlServerVersion GetVersion()
         {
-            var compatibilityString = _databaseGateway.GetString("select compatibility_level from sys.databases where database_id = db_id();");
+            var compatibilityString = _databaseGateway.GetString("select compatibility_level from sys.databases where name = DB_NAME();");
             SqlServerVersion res;
             if (Enum.TryParse(string.Format("Sql{0}", compatibilityString), out res))
             {
