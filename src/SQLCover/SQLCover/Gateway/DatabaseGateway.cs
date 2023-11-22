@@ -54,7 +54,7 @@ namespace SQLCover.Gateway
         {
             using (var command = CreateCommand(query))
             {
-                return command.ExecuteScalar().ToString();
+                return command.ExecuteScalar()?.ToString();
             }
         }
 
