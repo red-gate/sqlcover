@@ -10,10 +10,12 @@ namespace SQLCover.Trace
     {
         
         private const string CreateTrace = @"CREATE EVENT SESSION [{0}] ON SERVER 
-ADD EVENT sqlserver.sp_statement_starting(action (sqlserver.plan_handle, sqlserver.tsql_stack) where ([sqlserver].[database_id]=({1})))
+ADD EVENT sqlserver.sp_statement_completed(action (sqlserver.plan_handle, sqlserver.tsql_stack) where ([sqlserver].[database_id]=({1})))
 ADD TARGET package0.asynchronous_file_target(
-     SET filename='{2}')
-WITH (MAX_MEMORY=100 MB,EVENT_RETENTION_MODE=NO_EVENT_LOSS,MAX_DISPATCH_LATENCY=1 SECONDS,MAX_EVENT_SIZE=0 KB,MEMORY_PARTITION_MODE=NONE,TRACK_CAUSALITY=OFF,STARTUP_STATE=OFF) 
+     SET filename='{2}',
+        max_file_size = 10240,
+        max_rollover_files = 20)
+WITH (MAX_MEMORY=256 MB,EVENT_RETENTION_MODE=NO_EVENT_LOSS,MAX_DISPATCH_LATENCY=5 SECONDS,MAX_EVENT_SIZE=256 MB,MEMORY_PARTITION_MODE=NONE,TRACK_CAUSALITY=OFF,STARTUP_STATE=OFF) 
 ";
 
         private const string StartTraceFormat = @"alter event session [{0}] on server state = start
