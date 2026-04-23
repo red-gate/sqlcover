@@ -232,12 +232,14 @@ namespace SQLCover
             _result = new CoverageResult(batches, xml, _databaseName, _database.DataSource());
         }
 
-        public IEnumerable<string> GetBatchesObjectNames()
+        public List<string> GetBatchesObjectNames()
         {
+            var batchesList = new List<string>();
             foreach (var batch in _source.GetBatches(null))
             {
-                yield return batch.ObjectName;
+                batchesList.Add(batch.ObjectName);
             }
+            return batchesList;
         }
 
         public CoverageResult Results()
