@@ -1,0 +1,32 @@
+name: Generate package
+
+on:
+  # Triggered only on workflow dispatch to prevent automatic release
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (Test or Live Mode)'
+        type: choice
+        required: true
+        default: 'TestMode'
+        options:
+        - TestMode
+        - LiveMode
+      version:
+        description: 'SQL Cover version (Eg. 1.0.31)'
+        required: true
+
+jobs:
+  build:
+    runs-on:
+      - self-hosted
+      - windows
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Generate nuget package
+        env:
+          version: ${{ github.event.inputs.version }}
+        shell: pwsh
+        run: |
+          echo "Skipping package generation for now..."
