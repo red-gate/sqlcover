@@ -48,6 +48,10 @@ jobs:
             -find MSBuild\**\Bin\MSBuild.exe
 
           if (-not $msbuild) { throw "MSBuild not found" }
+
+          & $msbuild `
+            src/SQLCover/SQLCover/SQLCover.csproj `
+            /p:Configuration=Release `
       
       # -------------------------------------------------
       # Setup NuGet
