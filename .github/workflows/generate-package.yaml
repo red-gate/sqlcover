@@ -33,12 +33,12 @@ jobs:
       # Restore
       # -------------------------------------------------
       - name: Restore NuGet packages
-        run: dotnet restore
+        run: dotnet restore src/SQLCover/SQLCover.sln
 
       # -------------------------------------------------
-      # Build (MSBuild + IL tools)
+      # Build (MSBuild)
       # -------------------------------------------------
-      - name: Build using full MSBuild with IL tools
+      - name: Build using full MSBuild
         shell: pwsh
         run: |
           $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
