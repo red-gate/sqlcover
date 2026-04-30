@@ -1,0 +1,32 @@
+name: "Push package"
+
+description: "Push package to NuGet"
+
+inputs:
+  path:
+    description: "Path to the package that will be pushed"
+    required: true
+  package:
+    description: "Name of the package that will be pushed"
+    required: true
+
+runs:
+  using: "composite"
+  
+  steps:
+    - name: Get Vault Secrets
+      uses: hashicorp/vault-action@v3.4.0
+      with:
+        method: jwt
+        url: https://vault.red-gate.com
+        path: gha_jwt
+        role: "sqlcover"
+        secrets: |
+              build-secrets/data/shared/nuget username | NUGET_USER;
+              build-secrets/data/shared/nuget password | NUGET_TOKEN;
+              build-secrets/data/shared/nuget url | NUGET_RG_FEED;
+
+    - name: Push package
+      shell: pwsh
+      run: |
+          ./.github/actions/push-package/push-package.ps1 ${{ inputs.path }} ${{ inputs.package }}

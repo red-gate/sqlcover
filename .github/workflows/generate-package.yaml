@@ -1,32 +1,85 @@
 name: Generate package
 
+
 on:
-  # Triggered only on workflow dispatch to prevent automatic release
+  push:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment (Test or Live Mode)'
-        type: choice
-        required: true
-        default: 'TestMode'
-        options:
-        - TestMode
-        - LiveMode
-      version:
-        description: 'SQL Cover version (Eg. 1.0.31)'
-        required: true
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
-    runs-on:
+    name: Build and Publish
+    runs-on: 
       - self-hosted
       - windows
 
     steps:
-      - uses: actions/checkout@v6
-      - name: Generate nuget package
-        env:
-          version: ${{ github.event.inputs.version }}
+      # -------------------------------------------------
+      # Checkout
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # -------------------------------------------------
+      # Setup .NET
+      # -------------------------------------------------
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '6.0.x'
+
+      # -------------------------------------------------
+      # Restore
+      # -------------------------------------------------
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      # -------------------------------------------------
+      # Build (MSBuild + IL tools)
+      # -------------------------------------------------
+      - name: Build using full MSBuild with IL tools
         shell: pwsh
         run: |
-          echo "Skipping package generation for now..."
+          $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+            -latest `
+            -products * `
+            -requires Microsoft.Component.MSBuild `
+            -find MSBuild\**\Bin\MSBuild.exe
+
+          if (-not $msbuild) { throw "MSBuild not found" }
+
+      # -------------------------------------------------
+      # Pack
+      # -------------------------------------------------
+      - name: Pack NuGet package
+        shell: pwsh
+        run: |
+          dotnet pack `
+            src/SQLCover/SQLCover/SQLCover.csproj `
+            -p:NuspecFile=SqlCover.nuspec `
+            -p:NuspecBasePath=nuget `
+            -o packages `
+            --no-build `
+            -p:IncludeBuildOutput=false
+
+      # -------------------------------------------------
+      # Verify package
+      # -------------------------------------------------
+      - name: Verify package contents
+        shell: pwsh
+        run: |
+          Expand-Archive packages\*.nupkg extracted -Force
+          Get-ChildItem -Recurse extracted
+
+      # -------------------------------------------------
+      # Publish
+      # -------------------------------------------------
+      - name: Publish to NuGet
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/push-package
+        with:
+          path: ./packages
+          package: RedGate.ThirdParty.SqlCover
