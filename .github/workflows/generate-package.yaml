@@ -36,7 +36,7 @@ jobs:
         uses: NuGet/setup-nuget@v2
 
       # -------------------------------------------------
-      # Restore (IMPORTANT)
+      # Restore NuGet (IMPORTANT)
       # -------------------------------------------------
       - name: Restore NuGet packages
         run: nuget restore src/SQLCover/SQLCover.sln
@@ -46,12 +46,6 @@ jobs:
       # -------------------------------------------------
       - name: Build solution
         run: msbuild src/SQLCover/SQLCover.sln /p:Configuration=Release
-      
-      # -------------------------------------------------
-      # Setup NuGet
-      # -------------------------------------------------
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
 
       # -------------------------------------------------
       # Pack
