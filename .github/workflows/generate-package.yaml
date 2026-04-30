@@ -55,7 +55,7 @@ jobs:
       - name: Pack NuGet package
         shell: pwsh
         run: |
-          dotnet pack `
+          & "C:\tools\nuget\nuget.exe" pack `
             src/SQLCover/SQLCover/SQLCover.csproj `
             -p:NuspecFile=nuspec/SqlCover.nuspec `
             -p:NuspecBasePath=nuget `
