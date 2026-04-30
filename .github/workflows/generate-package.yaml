@@ -48,20 +48,20 @@ jobs:
             -find MSBuild\**\Bin\MSBuild.exe
 
           if (-not $msbuild) { throw "MSBuild not found" }
+      
+      # -------------------------------------------------
+      # Setup NuGet
+      # -------------------------------------------------
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
       # -------------------------------------------------
       # Pack
       # -------------------------------------------------
       - name: Pack NuGet package
         shell: pwsh
-        run: |          
-          $NuGetExe = "C:\tools\nuget\nuget.exe"
-
-          if (!(Test-Path $NuGetExe)) {
-            throw "nuget.exe not found at $NuGetExe"
-          }
-
-          & $NuGetExe pack `
+        run: |  
+          nuget pack `
             nuspec/SqlCover.nuspec `
             -BasePath nuget `
             -OutputDirectory packages `
