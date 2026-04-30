@@ -54,14 +54,19 @@ jobs:
       # -------------------------------------------------
       - name: Pack NuGet package
         shell: pwsh
-        run: |
-          & "C:\tools\nuget\nuget.exe" pack `
-            src/SQLCover/SQLCover/SQLCover.csproj `
-            -p:NuspecFile=nuspec/SqlCover.nuspec `
-            -p:NuspecBasePath=nuget `
-            -o packages `
-            --no-build `
-            -p:IncludeBuildOutput=false
+        run: |          
+          $NuGetExe = "C:\tools\nuget\nuget.exe"
+
+          if (!(Test-Path $NuGetExe)) {
+            throw "nuget.exe not found at $NuGetExe"
+          }
+
+          & $NuGetExe pack `
+            nuspec/SqlCover.nuspec `
+            -BasePath nuget `
+            -OutputDirectory packages `
+            -NonInteractive
+
 
       # -------------------------------------------------
       # Verify package
