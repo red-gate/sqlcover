@@ -28,30 +28,24 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '6.0.x'
+                
+      # -------------------------------------------------
+      # Setup NuGet
+      # -------------------------------------------------
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
       # -------------------------------------------------
-      # Restore
+      # Restore (IMPORTANT)
       # -------------------------------------------------
       - name: Restore NuGet packages
-        run: dotnet restore src/SQLCover/SQLCover.sln
+        run: nuget restore src/SQLCover/SQLCover.sln
 
       # -------------------------------------------------
-      # Build (MSBuild)
+      # Build
       # -------------------------------------------------
-      - name: Build using full MSBuild
-        shell: pwsh
-        run: |
-          $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
-            -latest `
-            -products * `
-            -requires Microsoft.Component.MSBuild `
-            -find MSBuild\**\Bin\MSBuild.exe
-
-          if (-not $msbuild) { throw "MSBuild not found" }
-
-          & $msbuild `
-            src/SQLCover/SQLCover/SQLCover.csproj `
-            /p:Configuration=Release `
+      - name: Build solution
+        run: msbuild src/SQLCover/SQLCover.sln /p:Configuration=Release
       
       # -------------------------------------------------
       # Setup NuGet
