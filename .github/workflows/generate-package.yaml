@@ -1,4 +1,4 @@
-name: Generate package
+name: Generate package - SQLCover
 
 
 on:
@@ -21,7 +21,7 @@ jobs:
       # Checkout
       # -------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       # -------------------------------------------------
       # Setup .NET
@@ -59,7 +59,7 @@ jobs:
         run: |
           dotnet pack `
             src/SQLCover/SQLCover/SQLCover.csproj `
-            -p:NuspecFile=SqlCover.nuspec `
+            -p:NuspecFile=nuspec/SqlCover.nuspec `
             -p:NuspecBasePath=nuget `
             -o packages `
             --no-build `
@@ -78,7 +78,7 @@ jobs:
       # Publish
       # -------------------------------------------------
       - name: Publish to NuGet
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/publish-package'
         uses: ./.github/actions/push-package
         with:
           path: ./packages
