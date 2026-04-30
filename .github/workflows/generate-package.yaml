@@ -12,9 +12,7 @@ permissions:
 jobs:
   build:
     name: Build and Publish
-    runs-on: 
-      - self-hosted
-      - windows
+    runs-on: windows-latest
 
     steps:
       # -------------------------------------------------
