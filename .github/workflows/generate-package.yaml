@@ -30,22 +30,13 @@ jobs:
           dotnet-version: '6.0.x'
                 
       # -------------------------------------------------
-      # Setup NuGet
-      # -------------------------------------------------
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      # -------------------------------------------------
-      # Restore NuGet (IMPORTANT)
-      # -------------------------------------------------
-      - name: Restore NuGet packages
-        run: nuget restore src/SQLCover/SQLCover.sln
-
-      # -------------------------------------------------
       # Build
       # -------------------------------------------------
       - name: Build solution
-        run: msbuild src/SQLCover/SQLCover.sln /p:Configuration=Release
+        run:  |
+          echo "Building Solution..."
+          .\.build\_init.ps1
+          Build `
 
       # -------------------------------------------------
       # Pack

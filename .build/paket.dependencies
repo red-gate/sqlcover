@@ -1,0 +1,8 @@
+source https://red-gate.pkgs.visualstudio.com/_packaging/Main/nuget/v3/index.json
+
+nuget RedGate.Build ~> 7.5.331
+
+source https://api.nuget.org/v3/index.json
+
+nuget Invoke-Build ~> 5.9
+nuget Nuget.CommandLine ~> 6.2.1
